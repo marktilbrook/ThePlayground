@@ -213,7 +213,7 @@
                 invert = invert * -1;
                 phase -= 2 * Math.PI;
             } else {
-                phase += controls.rotationSpeed;
+                phase += 0.025;
             }
             sphereLightMesh.position.z = +(7 * (Math.sin(phase)));
             sphereLightMesh.position.x = +(14 * (Math.cos(phase)));
