@@ -47,10 +47,13 @@
         renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMapEnabled = true;
+        renderer.shadowMapType = THREE.PCFShadowMap;
         document.body.appendChild( renderer.domElement );
 
         //create mouse controls
-        
+        // const controls1 = new OrbitControls(camera, canvas);
+        // controls1.target.set(0, 5, 0);
+        // controls1.update();
 
         // create the ground plane
         var planeGeometry = new THREE.PlaneGeometry(60, 20, 20, 20);
@@ -73,34 +76,36 @@
         camera.position.z = 30;
         camera.lookAt(scene.position);
 
-        // add subtle ambient lighting
+        //################################ LIGHTING #####################################
+        //add subtle ambient lighting
         var ambiColor = "#0c0c0c";
         var ambientLight = new THREE.AmbientLight(ambiColor);
         scene.add(ambientLight);
-
 
         //add pointlight
         var pointColor = "#ccffcc";
         var pointLight = new THREE.PointLight(pointColor);
         pointLight.distance = 100;
+        pointLight.castShadow = true;
         scene.add(pointLight);
-
-        // add a small sphere simulating the pointlight
+        
+        // this just shows you where the pointlight is
         var sphereLight = new THREE.SphereGeometry(0.2);
         var sphereLightMaterial = new THREE.MeshBasicMaterial({color: 0xac6c25});
         var sphereLightMesh = new THREE.Mesh(sphereLight, sphereLightMaterial);
         sphereLightMesh.castShadow = true;
-
         sphereLightMesh.position = new THREE.Vector3(3, 0, 3);
         scene.add(sphereLightMesh);
         
-       
-
-        // add spotlight for the shadows
-        //var spotLight = new THREE.SpotLight(0xffffff);
-        //spotLight.position.set(-40, 60, -10);
-        //spotLight.castShadow = true;
-        //scene.add(spotLight);
+        //add spotlight
+        var spotLightColor = "#ffffff"
+        var spotLight0 = new THREE.SpotLight(spotLightColor);
+        spotLight0.position.set(-40, 60, -10);
+        spotLight0.castShadow = true;
+        spotLight0.target = plane;
+        scene.add(spotLight0);
+    
+        //################################ END LIGHTING #####################################
 
         // add the output of the renderer to the html element
         document.getElementById("WebGL-output").appendChild(renderer.domElement);
@@ -123,7 +128,10 @@
             this.pointIntensity = 1;
             this.pointDistance = 100;
 
+            this.spotLightColor = spotLightColor;
+
             
+
 
             this.removeCube = function () 
             {
@@ -189,6 +197,12 @@
         gui.add(controls, 'outputObjects');
         gui.add(controls, 'numberOfObjects').listen();
 
+        gui.addColor(controls, 'spotLightColor').onChange(function (e) {
+            ambientLight.color = new THREE.Color(e);
+        });
+
+        
+
         render();
 
         function render() 
@@ -217,7 +231,7 @@
             }
             sphereLightMesh.position.z = +(7 * (Math.sin(phase)));
             sphereLightMesh.position.x = +(14 * (Math.cos(phase)));
-            sphereLightMesh.position.y = 5;
+            sphereLightMesh.position.y = 8;
 
             if (invert < 0) {
                 var pivot = 14;
