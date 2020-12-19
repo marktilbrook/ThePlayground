@@ -130,6 +130,12 @@
 
             this.spotLightColor = spotLightColor;
 
+            this.intensity = 1;
+            this.angle = 0.1;
+            this.debug = false;
+            this.castShadow = true;
+
+
             
 
 
@@ -198,7 +204,23 @@
         gui.add(controls, 'numberOfObjects').listen();
 
         gui.addColor(controls, 'spotLightColor').onChange(function (e) {
-            ambientLight.color = new THREE.Color(e);
+            spotLight0.color = new THREE.Color(e);
+        });
+
+        gui.add(controls, 'angle', 0, 1).onChange(function (e) {
+            spotLight0.angle = e;
+        });
+
+        gui.add(controls, 'intensity', 0, 5).onChange(function (e) {
+            spotLight0.intensity = e;
+        });
+
+        gui.add(controls, 'debug').onChange(function (e) {
+            spotLight0.shadowCameraVisible = e;
+        });
+
+        gui.add(controls, 'castShadow').onChange(function (e) {
+            spotLight0.castShadow = e;
         });
 
         
